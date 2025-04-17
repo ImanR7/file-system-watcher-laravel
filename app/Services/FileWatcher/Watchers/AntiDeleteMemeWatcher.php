@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class AntiDeleteMemeWatcher implements FileWatcherInterface
 {
-    protected $memeApiUrl = 'https://meme-api.com/gimme';
+    protected const API_URL = 'https://meme-api.com/gimme';
 
     public function supports(SplFileInfo $file, string $event): bool
     {
@@ -17,32 +17,55 @@ class AntiDeleteMemeWatcher implements FileWatcherInterface
 
     public function handle(SplFileInfo $file, string $event): void
     {
-        $path = $file->getRealPath();
-        $directory = dirname($path);
+        $memeUrl = $this->fetchMemeImageUrl();
 
-        $response = Http::get($this->memeApiUrl);
-
-        if ($response->successful()) {
-            $memeImageUrl = $response->json()['url'];
-
-            $imageContent = file_get_contents($memeImageUrl);
-
-            if ($imageContent !== false) {
-                $newFileName = pathinfo($file->getFilename(), PATHINFO_FILENAME) . '.jpg';
-                $memeImagePath = $directory . '/' . $newFileName;
-
-                if (!file_exists($directory)) {
-                    var_dump($directory);
-                    mkdir($directory, 0777, true);
-                }
-
-                file_put_contents($memeImagePath, $imageContent);
-                logger()->info("File replaced with meme: " . $memeImagePath);
-            } else {
-                logger()->error("Failed to download meme image.");
-            }
-        } else {
+        if (!$memeUrl) {
             logger()->error("Failed to fetch meme from API.");
+            return;
         }
+
+        $imageContent = $this->downloadImage($memeUrl);
+
+        if (!$imageContent) {
+            logger()->error("Failed to download meme image.");
+            return;
+        }
+
+        $replacementPath = $this->buildReplacementPath($file);
+
+        $this->ensureDirectoryExists(dirname($replacementPath));
+
+        $this->replaceWithMeme($replacementPath, $imageContent);
+    }
+
+    private function fetchMemeImageUrl(): ?string
+    {
+        $response = Http::get(self::API_URL);
+        return $response->successful() ? $response->json()['url'] ?? null : null;
+    }
+
+    private function downloadImage(string $url): ?string
+    {
+        $content = @file_get_contents($url);
+        return $content !== false ? $content : null;
+    }
+
+    private function buildReplacementPath(SplFileInfo $file): string
+    {
+        $filename = pathinfo($file->getFilename(), PATHINFO_FILENAME) . '.jpg';
+        return dirname($file->getRealPath()) . '/' . $filename;
+    }
+
+    private function ensureDirectoryExists(string $directory): void
+    {
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true);
+        }
+    }
+
+    private function replaceWithMeme(string $path, string $content): void
+    {
+        file_put_contents($path, $content);
+        logger()->info("File replaced with meme: " . $path);
     }
 }
