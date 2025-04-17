@@ -2,6 +2,8 @@
 
 namespace App\Services\FileWatcher\Watchers;
 
+use App\Enums\SupportedEvents;
+use App\Enums\SupportedExtensions;
 use App\Services\FileWatcher\Contracts\FileWatcherInterface;
 use Intervention\Image\Drivers\Gd\Driver;
 use SplFileInfo;
@@ -10,8 +12,13 @@ use Intervention\Image\ImageManager;
 class JpgFileWatcher implements FileWatcherInterface
 {
     protected ImageManager $imageManager;
-    protected const WATCHABLE_EXTENSIONS = ['jpg', 'jpeg'];
-    protected const SUPPORTED_EVENTS = ['created'];
+    protected array $watchableExtensions = [
+        SupportedExtensions::JPG->value,
+        SupportedExtensions::JPEG->value,
+    ];
+    protected array $watchableEvents = [
+        SupportedEvents::CREATED->value,
+    ];
 
     public function __construct()
     {
@@ -21,7 +28,7 @@ class JpgFileWatcher implements FileWatcherInterface
     public function supports(SplFileInfo $file, string $event): bool
     {
         $ext = strtolower($file->getExtension());
-        return in_array($ext, self::WATCHABLE_EXTENSIONS) && in_array($event, self::SUPPORTED_EVENTS);
+        return in_array($ext, $this->watchableExtensions) && in_array($event, $this->watchableEvents);
     }
 
     public function handle(SplFileInfo $file, string $event): void

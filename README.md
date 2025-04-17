@@ -89,6 +89,9 @@ app/
 ├── Console/
 │   └── Commands/
 │       └── WatchFileSystem.php     # Artisan command to run the watcher loop
+├── Enums/
+│       ├── SupportedEvents.php  # Supported events Enum
+│       └── SupportedExtensions.php # Supported extensions Enum
 ├── Services/
 │   └── FileWatcher/
 │       ├── WatcherManager.php      # Core manager to dispatch file events to watchers
@@ -144,6 +147,35 @@ php artisan watch:fs
 - Restored with a random meme image (from Meme API).
 - Uses same filename as deleted, but with `.jpg` extension.
 - Recreates directory structure if needed.
+
+---
+
+## 🧩 Enums
+
+To enforce consistency and avoid hard-coded strings throughout the codebase, two PHP 8.1+ enums have been defined: `SupportedEvents` and `SupportedExtensions`.
+
+### `App\Enums\SupportedEvents`
+
+This enum defines the supported file system events the watcher reacts to:
+
+| Enum Case | Value     | Description                       |
+|-----------|-----------|-----------------------------------|
+| `CREATED` | `created` | Triggered when a file is created  |
+| `MODIFIED`| `modified`| Triggered when a file is modified |
+| `DELETED` | `deleted` | Triggered when a file is deleted  |
+
+
+### `App\Enums\SupportedExtensions`
+
+This enum defines the supported file types that can be monitored and handled:
+
+| Enum Case | Value     | Description              |
+|-----------|-----------|--------------------------|
+| `JPG`     | `jpg`     | JPEG image format        |
+| `JPEG`    | `jpeg`    | Alternative image format |
+| `JSON`    | `json`    | JSON data file           |
+| `ZIP`     | `zip`     | Zip archive file         |
+| `TXT`     | `txt`     | Plain text file          |
 
 ---
 

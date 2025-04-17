@@ -2,6 +2,7 @@
 
 namespace App\Services\FileWatcher\Watchers;
 
+use App\Enums\SupportedEvents;
 use App\Services\FileWatcher\Contracts\FileWatcherInterface;
 use SplFileInfo;
 use Illuminate\Support\Facades\Http;
@@ -12,7 +13,7 @@ class AntiDeleteMemeWatcher implements FileWatcherInterface
 
     public function supports(SplFileInfo $file, string $event): bool
     {
-        return $event === 'deleted';
+        return $event === SupportedEvents::DELETED->value;
     }
 
     public function handle(SplFileInfo $file, string $event): void

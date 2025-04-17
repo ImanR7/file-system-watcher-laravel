@@ -2,19 +2,25 @@
 
 namespace App\Services\FileWatcher\Watchers;
 
+use App\Enums\SupportedEvents;
+use App\Enums\SupportedExtensions;
 use App\Services\FileWatcher\Contracts\FileWatcherInterface;
 use Illuminate\Support\Facades\Http;
 use SplFileInfo;
 
 class TxtFileWatcher implements FileWatcherInterface
 {
-    protected const WATCHABLE_EXTENSION = 'txt';
-    protected const SUPPORTED_EVENTS = ['created', 'modified'];
     protected const API_URL = 'https://baconipsum.com/api/?type=meat-and-filler&paras=1&format=text';
+
+    protected string $watchableExtensions = SupportedExtensions::TXT->value;
+    protected array $watchableEvents = [
+        SupportedEvents::CREATED->value,
+        SupportedEvents::MODIFIED->value,
+    ];
 
     public function supports(SplFileInfo $file, string $event): bool
     {
-        return strtolower($file->getExtension()) === self::WATCHABLE_EXTENSION && in_array($event, self::SUPPORTED_EVENTS);
+        return strtolower($file->getExtension()) === $this->watchableExtensions && in_array($event, $this->watchableEvents);
     }
 
     public function handle(SplFileInfo $file, string $event): void

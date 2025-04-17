@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\SupportedEvents;
 use App\Services\FileWatcher\WatcherManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
@@ -61,7 +62,7 @@ class WatchFileSystem extends Command
         $created = array_diff_key($current, $previous);
         foreach ($created as $path => $meta) {
             $this->log("🟢 Created: $path");
-            $this->manager->handle(new SplFileInfo($path), 'created');
+            $this->manager->handle(new SplFileInfo($path), SupportedEvents::CREATED->value);
         }
 
         // Modified files
@@ -69,7 +70,7 @@ class WatchFileSystem extends Command
             if (isset($previous[$path]) &&
                 ($previous[$path]['mtime'] !== $meta['mtime'] || $previous[$path]['size'] !== $meta['size'])) {
                 $this->log("🟡 Modified: $path");
-                $this->manager->handle(new SplFileInfo($path), 'modified');
+                $this->manager->handle(new SplFileInfo($path), SupportedEvents::MODIFIED->value);
             }
         }
 
@@ -77,7 +78,7 @@ class WatchFileSystem extends Command
         $deleted = array_diff_key($previous, $current);
         foreach ($deleted as $path => $meta) {
             $this->log("🔴 Deleted: $path");
-            $this->manager->handle(new SplFileInfo($path), 'deleted');
+            $this->manager->handle(new SplFileInfo($path), SupportedEvents::DELETED->value);
         }
     }
 
