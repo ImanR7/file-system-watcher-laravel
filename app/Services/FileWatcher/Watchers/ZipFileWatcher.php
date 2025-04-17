@@ -59,7 +59,8 @@ class ZipFileWatcher implements FileWatcherInterface
             $zip->close();
             logger()->info("Zip extracted: " . $extractPath);
         } else {
-            throw new WatcherErrorException($this->watchableExtensions, "Failed to open Zip file.");
+            $wrapped = new WatcherErrorException($this->watchableExtensions, "Failed to open Zip file.");
+            logger()->error($wrapped->getMessage());
         }
     }
 }

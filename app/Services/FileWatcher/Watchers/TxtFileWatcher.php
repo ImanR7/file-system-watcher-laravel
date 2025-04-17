@@ -39,7 +39,8 @@ class TxtFileWatcher implements FileWatcherInterface
                 $this->appendGeneratedText($path, $baconText);
             }
         } catch (\Throwable $exception) {
-            throw new WatcherErrorException($this->watchableExtensions, $exception->getMessage());
+            $wrapped = new WatcherErrorException($this->watchableExtensions, $exception->getMessage());
+            logger()->error($wrapped->getMessage());
         }
     }
 

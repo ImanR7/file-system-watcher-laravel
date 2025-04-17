@@ -35,8 +35,11 @@ class JsonFileWatcher implements FileWatcherInterface
             }
 
             $this->sendToWebhook($data);
+        } catch (InvalidJsonException $exception) {
+            logger()->error($exception->getMessage());
         } catch (\Throwable $exception) {
-            throw new WatcherErrorException($this->watchableExtensions, $exception->getMessage());
+            $wrapped = new WatcherErrorException($this->watchableExtensions, $exception->getMessage());
+            logger()->error($wrapped->getMessage());
         }
     }
 

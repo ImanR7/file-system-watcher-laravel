@@ -26,6 +26,54 @@ The solution avoids infinite loops by tracking already-processed content and ens
 
 ---
 
+## 🧠 Development Challenges & Design Decisions
+
+### Challenges Encountered
+
+During the development of the Laravel File System Watcher, several challenges arose:
+
+- **Preventing infinite loops**: When modifying or restoring files, it was essential to prevent the watcher from reacting to its own changes.
+- **Ensuring directory existence**: When restoring deleted files or extracting ZIP archives, the application had to ensure the target directory existed — including support for nested directories.
+- **Preserving file naming patterns**: Restored or replaced files needed to maintain the original filenames or structure (e.g., maintaining the `.zip` filename when replacing with a `.jpg` meme).
+- **Handling invalid JSON content**: Malformed JSON files had to be detected without breaking the entire command execution.
+- **Test automation without real fixtures**: Creating file-based test cases required handling temporary directories and synthetic file creation without relying on external assets.
+
+
+
+### Initial Ideas and Unimplemented Approaches
+
+Some approaches were considered but ultimately not implemented:
+
+- **Using a queue system**: Instead of processing file events synchronously, a queued approach could decouple watchers from processing, but it was omitted to keep the system lightweight.
+- **Using file hashes**: One idea to prevent re-processing identical files (especially images) was using file hashes, but instead a comparison of file contents before and after modification (using `md5_file`) was used for simplicity.
+
+
+
+### Solutions Implemented
+
+The following strategies were used to address the identified challenges:
+
+- **Recursive directory creation**: Used `mkdir($path, 0777, true)` to safely handle restoration in nested paths.
+- **Custom exceptions for JSON errors**: Introduced `InvalidJsonException` and `WatcherErrorException` to isolate errors and prevent the entire command from failing.
+- **Try-catch handling in each watcher**: Ensures each file event is isolated and errors do not stop the entire watch process.
+- **Synthetic file generation in tests**: All tests dynamically generate their own files and directories, ensuring they are self-contained and environment-independent.
+
+
+
+### Extensibility for Future Enhancements
+
+The architecture is designed with modularity and extensibility in mind:
+
+- **Dedicated Watcher classes**: Each file extension is handled by its own class, following the `handle(SplFileInfo $file, string $event)` contract.
+- **Watcher Manager**: Coordinates all watchers and routes events based on file extension and supported events.
+- **Enums for supported extensions and events**: `SupportedEvents` and `SupportedExtensions` provide centralized management for supported types, making it easier to extend in the future.
+- **Configuration-based setup**: Developers can configure which directories to watch and which events/extensions are enabled without changing the core logic.
+- **Exception handling ready for external reporting**: The system can be easily extended to report to external services like Sentry or Slack in case of runtime exceptions.
+
+This design ensures that adding a new watcher (e.g., for `.csv`, `.xml`, or `.log` files) is as simple as creating a new class and registering it with the manager.
+
+---
+
 ## 🧪 Installation
 
 ```bash

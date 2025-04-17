@@ -43,7 +43,8 @@ class JpgFileWatcher implements FileWatcherInterface
                 logger()->info("JPG Watcher: No actual change, skipping.");
             }
         } catch (\Throwable $exception) {
-            throw new WatcherErrorException($this->watchableExtensions[1], $exception->getMessage());
+            $wrapped = new WatcherErrorException($this->watchableExtensions[1], $exception->getMessage());
+            logger()->error($wrapped->getMessage());
         }
     }
 
