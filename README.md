@@ -188,8 +188,6 @@ This enum defines the supported file types that can be monitored and handled:
 
 To improve error handling and maintain clean, readable code, this project defines two custom exception classes located in the `App\Exceptions` namespace. These exceptions allow watcher classes to throw domain-specific errors instead of relying on inline logging, making the system easier to debug, maintain, and test.
 
----
-
 ### `InvalidJsonException`
 
 ```php
@@ -254,7 +252,7 @@ The tests cover the following functionality:
 
 ## ➕ Adding a New Watcher
 
-1. Create a class in `Watchers/` implementing:
+1. Create a class in `app/Services/FileWatcher/Watchers/` implementing:
 
 ```php
 public function supports(SplFileInfo $file, string $event): bool
