@@ -1,4 +1,4 @@
-# 📁 Laravel File System Watcher
+# 📁 Local Brand X - Laravel File System Watcher
 
 This project is a **real-time file system monitoring tool** built using the Laravel framework. It’s designed with a modular and clean architecture that allows you to monitor any directory on your system and perform custom actions automatically based on file system events like creation, modification, or deletion.
 
@@ -20,9 +20,9 @@ The solution avoids infinite loops by tracking already-processed content and ens
 - ✅ Real-time file system monitoring
 - 🖼️ JPG optimization
 - 📤 JSON processing via HTTP POST
-- 📄 TXT file extension with [Bacon Ipsum](https://baconipsum.com/json-api/)
+- 📄 TXT file extension with [Bacon Ipsum](https://baconipsum.com/api/?type=meat-and-filler)
 - 🗜️ ZIP file extraction
-- 🪖 Anti-delete meme replacement with images from [Meme API](https://meme-api.com/)
+- 🪖 Anti-delete meme replacement with images from [Meme API](https://meme-api.com/gimme)
 
 ---
 
@@ -92,12 +92,14 @@ app/
 ├── Services/
 │   └── FileWatcher/
 │       ├── WatcherManager.php      # Core manager to dispatch file events to watchers
+│       ├── Contracts/
+│       │   └── FileWatcherInterface.php  # Interface for all watcher classes
 │       └── Watchers/
-│           ├── TxtFileWatcher.php  # Appends Bacon Ipsum to .txt files
-│           ├── JsonFileWatcher.php # Sends .json file data to external API
-│           ├── JpgFileWatcher.php  # Optimizes JPGs using Intervention Image
-│           ├── ZipFileWatcher.php  # Extracts contents of ZIP archives
-│           └── AntiDeleteMemeWatcher.php # Replaces deleted files with memes
+│           ├── TxtFileWatcher.php  # Handles .txt files
+│           ├── JsonFileWatcher.php # Handles .json files
+│           ├── JpgFileWatcher.php  # Handles .jpg files
+│           ├── ZipFileWatcher.php  # Handles .zip files
+│           └── AntiDeleteMemeWatcher.php # Handles deleted files
 config/
 └── fswatcher.php                # Config file containing watch path and MIME-type map
 
