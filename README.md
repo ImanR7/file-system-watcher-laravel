@@ -13,16 +13,6 @@ Each file type has a dedicated **Watcher** class that encapsulates all related b
 The solution avoids infinite loops by tracking already-processed content and ensures robustness by restoring deleted files with memes and re-creating missing directories as needed.
 
 > 🧼 This project emphasizes **clean code**, **separation of concerns**, and **ease of future extensibility**.
----
-
-## 🚀 Features
-
-- ✅ Real-time file system monitoring
-- 🖼️ JPG optimization
-- 📤 JSON processing via HTTP POST
-- 📄 TXT file extension with [Bacon Ipsum](https://baconipsum.com/api/?type=meat-and-filler)
-- 🗜️ ZIP file extraction
-- 🪖 Anti-delete meme replacement with images from [Meme API](https://meme-api.com/gimme)
 
 ---
 
