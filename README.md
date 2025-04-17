@@ -92,6 +92,9 @@ app/
 ├── Enums/
 │       ├── SupportedEvents.php  # Supported events Enum
 │       └── SupportedExtensions.php # Supported extensions Enum
+├── Exceptions/
+│       ├── InvalidJsonException.php  # Invalid JSON file exception
+│       └── WatcherErrorException.php # Watcher error exception
 ├── Services/
 │   └── FileWatcher/
 │       ├── WatcherManager.php      # Core manager to dispatch file events to watchers
@@ -176,6 +179,38 @@ This enum defines the supported file types that can be monitored and handled:
 | `JSON`    | `json`    | JSON data file           |
 | `ZIP`     | `zip`     | Zip archive file         |
 | `TXT`     | `txt`     | Plain text file          |
+
+---
+
+
+## ⚠️ Custom Exceptions
+
+To improve error handling and maintain clean, readable code, this project defines two custom exception classes located in the `App\Exceptions` namespace. These exceptions allow watcher classes to throw domain-specific errors instead of relying on inline logging, making the system easier to debug, maintain, and test.
+
+---
+
+### `InvalidJsonException`
+
+```php
+class InvalidJsonException extends Exception
+{
+    public function __construct(string $filePath)
+    {
+        parent::__construct("Invalid JSON in file: {$filePath}");
+    }
+}
+```
+
+```php
+class WatcherErrorException extends Exception
+{
+    public function __construct(string $filePath, string $message)
+    {
+        parent::__construct("{$filePath} Watcher error: {$message}");
+    }
+}
+```
+
 
 ---
 

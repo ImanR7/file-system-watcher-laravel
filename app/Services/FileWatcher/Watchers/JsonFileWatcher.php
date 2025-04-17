@@ -4,6 +4,8 @@ namespace App\Services\FileWatcher\Watchers;
 
 use App\Enums\SupportedEvents;
 use App\Enums\SupportedExtensions;
+use App\Exceptions\InvalidJsonException;
+use App\Exceptions\WatcherErrorException;
 use App\Services\FileWatcher\Contracts\FileWatcherInterface;
 use Illuminate\Support\Facades\Http;
 use SplFileInfo;
@@ -29,13 +31,12 @@ class JsonFileWatcher implements FileWatcherInterface
             $data = $this->parseJsonFile($file);
 
             if ($data === null) {
-                logger()->warning("Invalid JSON file: " . $file->getRealPath());
-                return;
+                throw new InvalidJsonException($file->getRealPath());
             }
 
             $this->sendToWebhook($data);
-        } catch (\Exception $e) {
-            logger()->error("JSON Watcher error: " . $e->getMessage());
+        } catch (\Throwable $exception) {
+            throw new WatcherErrorException($this->watchableExtensions, $exception->getMessage());
         }
     }
 

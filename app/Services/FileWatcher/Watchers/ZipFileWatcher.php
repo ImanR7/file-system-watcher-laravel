@@ -4,6 +4,7 @@ namespace App\Services\FileWatcher\Watchers;
 
 use App\Enums\SupportedEvents;
 use App\Enums\SupportedExtensions;
+use App\Exceptions\WatcherErrorException;
 use App\Services\FileWatcher\Contracts\FileWatcherInterface;
 use SplFileInfo;
 use ZipArchive;
@@ -58,7 +59,7 @@ class ZipFileWatcher implements FileWatcherInterface
             $zip->close();
             logger()->info("Zip extracted: " . $extractPath);
         } else {
-            logger()->error("Failed to open Zip file: " . $zipPath);
+            throw new WatcherErrorException($this->watchableExtensions, "Failed to open Zip file.");
         }
     }
 }

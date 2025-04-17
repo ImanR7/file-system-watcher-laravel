@@ -4,6 +4,7 @@ namespace App\Services\FileWatcher\Watchers;
 
 use App\Enums\SupportedEvents;
 use App\Enums\SupportedExtensions;
+use App\Exceptions\WatcherErrorException;
 use App\Services\FileWatcher\Contracts\FileWatcherInterface;
 use Intervention\Image\Drivers\Gd\Driver;
 use SplFileInfo;
@@ -41,8 +42,8 @@ class JpgFileWatcher implements FileWatcherInterface
             } else {
                 logger()->info("JPG Watcher: No actual change, skipping.");
             }
-        } catch (\Exception $e) {
-            logger()->error("JPG Watcher error: " . $e->getMessage());
+        } catch (\Throwable $exception) {
+            throw new WatcherErrorException($this->watchableExtensions[1], $exception->getMessage());
         }
     }
 

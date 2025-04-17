@@ -4,6 +4,7 @@ namespace App\Services\FileWatcher\Watchers;
 
 use App\Enums\SupportedEvents;
 use App\Enums\SupportedExtensions;
+use App\Exceptions\WatcherErrorException;
 use App\Services\FileWatcher\Contracts\FileWatcherInterface;
 use Illuminate\Support\Facades\Http;
 use SplFileInfo;
@@ -37,8 +38,8 @@ class TxtFileWatcher implements FileWatcherInterface
             if ($baconText) {
                 $this->appendGeneratedText($path, $baconText);
             }
-        } catch (\Exception $e) {
-            logger()->error("TXT Watcher error: " . $e->getMessage());
+        } catch (\Throwable $exception) {
+            throw new WatcherErrorException($this->watchableExtensions, $exception->getMessage());
         }
     }
 
